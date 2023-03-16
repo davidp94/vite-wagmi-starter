@@ -128,6 +128,7 @@ const Home = () => {
 
   const previewDepositHandler = async (e: any) => {
     console.log(e.target.value)
+    if (!e.target.value) return
     setNewDeposit(e.target.value)
   }
 
@@ -142,6 +143,8 @@ const Home = () => {
 
   const depositHandler = async () => {
     if (!address) return
+    if (!newDeposit) return
+
     console.log(newDeposit)
     const amount = BigNumber.from(newDeposit).mul(BigNumber.from(10).pow(18))
     // check allowance
@@ -160,6 +163,7 @@ const Home = () => {
   }
   const previewRedeemHandler = (e: any) => {
     console.log(e.target.value)
+    if (!e.target.value) return
     const amount = BigNumber.from(e.target.value).mul(BigNumber.from(10).pow(18))
     setNewRedeem(e.target.value)
     erc4626Contract?.previewRedeem(amount).then((res: any) => {
@@ -168,7 +172,7 @@ const Home = () => {
   }
   const redeemHandler = () => {
     console.log(newRedeem)
-
+    if (!newRedeem) return
     if (!address) return
     const amount = BigNumber.from(newRedeem).mul(BigNumber.from(10).pow(18))
     // check balance
@@ -222,18 +226,16 @@ const Home = () => {
           ------ Balance -------
           <div>
             <p>XDEFI Token Address: {XDEFI_TOKEN_ADDRESS}</p>
-            <p>XDEFI ERC4626 Test Address: {ERC4626}</p>
+            <p>veXDEFI ERC4626 Test Address: {ERC4626}</p>
           </div>
           <div>
-            <p>$XDEFI Balance: {JSON.stringify(balanceXDEFI?.div(BigNumber.from(10).pow(18)).toNumber())}</p>
+            <p>$XDEFI Balance: {formatAmount(balanceXDEFI, 18)}</p>
           </div>
           <div>
-            <p>$veXDEFI Balance: {JSON.stringify(balanceveXDEFI?.div(BigNumber.from(10).pow(18)).toNumber())}</p>
+            <p>$veXDEFI Balance: {formatAmount(balanceveXDEFI, 18)}</p>
           </div>
           ------ Allowance --------
-          <div>
-            Allowance $XDEFI to Vault: {JSON.stringify(allowanceXDEFI?.div(BigNumber.from(10).pow(18)).toNumber())}
-          </div>
+          <div>Allowance $XDEFI to Vault: {formatAmount(allowanceXDEFI, 18)}</div>
           <div>
             set allowance how much: <br />{' '}
             <input
@@ -259,17 +261,14 @@ const Home = () => {
           <br /> -------------------------
           <br /> ------- Vault -----------
           <div>
-            <p>XDEFI Balance of Vault: {balanceXDEFIVault?.div(BigNumber.from(10).pow(18)).toNumber()}</p>
-            <p>Total veXDEFI supply: {totalSupply?.div(BigNumber.from(10).pow(18)).toNumber()}</p>
+            <p>XDEFI Balance of Vault: {formatAmount(balanceXDEFIVault, 18)}</p>
+            <p>Total veXDEFI supply: {formatAmount(totalSupply, 18)}</p>
           </div>
           <div>
             <p>
               Your share of the pool:{' '}
               {(totalSupply?.gt(0) &&
-                balanceveXDEFI
-                  ?.div(totalSupply || '1')
-                  .mul(100)
-                  .toNumber()) ||
+                (Number(formatAmount(balanceveXDEFI, 18)) / Number(formatAmount(totalSupply, 18))) * 100) ||
                 0}{' '}
               {'%'}
             </p>
@@ -277,8 +276,7 @@ const Home = () => {
               Deposit:{' '}
               <input type="number" min="1" step="1" value={newDeposit || '0'} onChange={previewDepositHandler}></input>
               <br />
-              {previewDeposit &&
-                `You will receive ${previewDeposit?.div(BigNumber.from(10).pow(18)).toNumber()} veXDEFI`}
+              {previewDeposit && `You will receive ${formatAmount(previewDeposit, 18, 2)} veXDEFI`}
               <br />
               {/* or
               <br />
@@ -302,7 +300,7 @@ const Home = () => {
               Redeem $veXDEFI:{' '}
               <input type="number" min="1" step="1" value={newRedeem || '0'} onChange={previewRedeemHandler}></input>
               <br />
-              {previewRedeem && `You will receive ${previewRedeem?.div(BigNumber.from(10).pow(18)).toNumber()} XDEFI`}
+              {previewRedeem && `You will receive ${formatAmount(previewRedeem, 18)} XDEFI`}
               <br />
               {address && (
                 <Button type="primary" onClick={redeemHandler} className="flex items-center">
