@@ -269,7 +269,6 @@ const Home = () => {
                 balanceveXDEFI
                   ?.div(totalSupply || '1')
                   .mul(100)
-                  .div(BigNumber.from(10).pow(18))
                   .toNumber()) ||
                 0}{' '}
               {'%'}
@@ -281,16 +280,16 @@ const Home = () => {
               {previewDeposit &&
                 `You will receive ${previewDeposit?.div(BigNumber.from(10).pow(18)).toNumber()} veXDEFI`}
               <br />
-              or
+              {/* or
               <br />
               {(totalSupply?.gt(0) &&
                 previewDeposit
                   // ?.div(BigNumber.from(10).pow(18))
-                  ?.div(totalSupply || '1')
+                  ?.div(totalSupply.add(previewDeposit) || '1')
                   .mul(100)
                   .toNumber()) ||
                 'N/A'}{' '}
-              {'% of the supply'}
+              {'% of the supply'} */}
               <br />
               {address && (
                 <Button type="primary" onClick={depositHandler} className="flex items-center">
