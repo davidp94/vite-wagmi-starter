@@ -1,9 +1,9 @@
 import { Button } from 'antd'
-import { useNetwork, useSwitchNetwork } from 'wagmi'
+import { mainnet, useNetwork, useSwitchNetwork } from 'wagmi'
 
 export function NetworkSwitcher() {
   const { error, isLoading, pendingChainId, switchNetwork } = useSwitchNetwork()
-  const { chains, chain } = useNetwork()
+  const { chain } = useNetwork()
 
   if (!chain) return null
 
@@ -16,7 +16,7 @@ export function NetworkSwitcher() {
 
       {switchNetwork && (
         <div className="flex gap-2 flex-wrap mt-3">
-          {chains.map((x) =>
+          {[mainnet].map((x) =>
             x.id === chain?.id ? null : (
               <Button
                 loading={isLoading && x.id === pendingChainId}
